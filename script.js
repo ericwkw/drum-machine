@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State Variables ---
     const sounds = ['Kick', 'Snare', 'Hi-Hat', 'Crash', 'Toms', 'Clap'];
     const soundFiles = {
-        'Kick': 'sounds/kick.wav',
-        'Snare': 'sounds/snare.wav',
-        'Hi-Hat': 'sounds/hihat.wav',
-        'Crash': 'sounds/crash.wav',
-        'Toms': 'sounds/tom.wav',
-        'Clap': 'sounds/clap.wav'
+        'Kick': '/sounds/kick.wav',
+        'Snare': '/sounds/snare.wav',
+        'Hi-Hat': '/sounds/hihat.wav',
+        'Crash': '/sounds/crash.wav',
+        'Toms': '/sounds/tom.wav',
+        'Clap': '/sounds/clap.wav'
     };
     let steps = parseInt(stepsSlider.value);
     let gridState = [];
@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioBuffers = {};
     let mainGainNode;
     const soundGainNodes = {}; // Individual gain nodes for each sound
+    let soloedSound = null;
+    const mutedSounds = new Set();
     let isPlaying = false;
     let currentStep = 0;
     let tempo = parseInt(tempoSlider.value);
@@ -67,6 +69,19 @@ document.addEventListener('DOMContentLoaded', () => {
             soundLabel.classList.add('sound-label');
             soundLabel.textContent = sound;
             soundRow.appendChild(soundLabel);
+
+            // Add solo/mute buttons
+            const soloBtn = document.createElement('button');
+            soloBtn.textContent = 'S';
+            soloBtn.classList.add('solo-btn');
+            soloBtn.dataset.sound = sound;
+            soundRow.appendChild(soloBtn);
+
+            const muteBtn = document.createElement('button');
+            muteBtn.textContent = 'M';
+            muteBtn.classList.add('mute-btn');
+            muteBtn.dataset.sound = sound;
+            soundRow.appendChild(muteBtn);
             
             // Add individual volume control
             const volumeControl = document.createElement('div');
@@ -127,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function playSound(buffer, time, soundName) {
         if (!audioContext) return;
+
+        if (soloedSound && soloedSound !== soundName) return;
+        if (mutedSounds.has(soundName)) return;
+
         const source = audioContext.createBufferSource();
         source.buffer = buffer;
         source.connect(soundGainNodes[soundName]);
@@ -208,6 +227,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = e.target.dataset.row;
             const col = e.target.dataset.col;
             gridState[row][col] = !gridState[row][col];
+        } else if (e.target.classList.contains('solo-btn')) {
+            const soundName = e.target.dataset.sound;
+            if (soloedSound === soundName) {
+                soloedSound = null;
+                e.target.classList.remove('active');
+            } else {
+                soloedSound = soundName;
+                document.querySelectorAll('.solo-btn.active').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+            }
+        } else if (e.target.classList.contains('mute-btn')) {
+            const soundName = e.target.dataset.sound;
+            if (mutedSounds.has(soundName)) {
+                mutedSounds.delete(soundName);
+                e.target.classList.remove('active');
+            } else {
+                mutedSounds.add(soundName);
+                e.target.classList.add('active');
+            }
         }
     });
 
