@@ -81,13 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             volumeSlider.classList.add('sound-volume-slider');
             volumeSlider.dataset.sound = sound;
             
-            const volumeDisplay = document.createElement('span');
-            volumeDisplay.classList.add('sound-volume-display');
-            volumeDisplay.textContent = '80%';
-            volumeDisplay.id = `${sound.toLowerCase()}-volume-display`;
-            
             volumeControl.appendChild(volumeSlider);
-            volumeControl.appendChild(volumeDisplay);
             soundRow.appendChild(volumeControl);
             
             gridContainer.appendChild(soundRow);
@@ -249,12 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (soundGainNodes[soundName]) {
                 soundGainNodes[soundName].gain.value = volume;
-            }
-            
-            // Update display
-            const display = document.getElementById(`${soundName.toLowerCase()}-volume-display`);
-            if (display) {
-                display.textContent = `${Math.round(volume * 100)}%`;
             }
         }
     });

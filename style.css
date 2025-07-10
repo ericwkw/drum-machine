@@ -170,9 +170,8 @@ input[type="range"]::-moz-range-thumb:hover {
 .sound-volume-control {
     display: flex;
     align-items: center;
-    gap: 6px;
     flex: 1;
-    max-width: 150px;
+    max-width: 120px;
 }
 
 .sound-volume-slider {
@@ -215,12 +214,6 @@ input[type="range"]::-moz-range-thumb:hover {
     transition: all 0.3s ease;
 }
 
-.sound-volume-display {
-    color: #b0b0b0;
-    font-size: 0.75rem;
-    min-width: 30px;
-    text-align: right;
-}
 
 .grid-cell {
     background-color: #444; /* Inactive color */
@@ -285,8 +278,7 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 
     .sound-volume-control {
-        max-width: 120px;
-        gap: 4px;
+        max-width: 100px;
     }
 
     .sound-volume-slider {
@@ -304,10 +296,6 @@ input[type="range"]::-moz-range-thumb:hover {
         height: 12px;
     }
 
-    .sound-volume-display {
-        font-size: 0.7rem;
-        min-width: 25px;
-    }
 
     .grid-cell {
         min-width: 20px; /* Allow cells to shrink */
@@ -360,8 +348,7 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 
     .sound-volume-control {
-        max-width: 100px;
-        gap: 3px;
+        max-width: 80px;
     }
 
     .sound-volume-slider {
@@ -379,10 +366,6 @@ input[type="range"]::-moz-range-thumb:hover {
         height: 10px;
     }
 
-    .sound-volume-display {
-        font-size: 0.65rem;
-        min-width: 20px;
-    }
 
     .grid-cell {
         min-height: 25px;
