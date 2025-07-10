@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let audioContext;
     const audioBuffers = {};
     let mainGainNode;
+    const soundGainNodes = {}; // Individual gain nodes for each sound
     let isPlaying = false;
     let currentStep = 0;
     let tempo = parseInt(tempoSlider.value);
@@ -41,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gridContainer.innerHTML = '';
         const oldGridState = [...gridState];
         gridState = [];
-        gridContainer.style.gridTemplateColumns = `100px repeat(${steps}, 1fr)`;
+        gridContainer.style.gridTemplateColumns = `300px repeat(${steps}, 1fr)`;
         gridContainer.style.gridTemplateRows = `repeat(${sounds.length}, 1fr)`;
 
         sounds.forEach((sound, rowIndex) => {
@@ -55,10 +56,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             gridState.push(newRow);
 
+            // Create sound row container
+            const soundRow = document.createElement('div');
+            soundRow.classList.add('sound-row');
+            
             const soundLabel = document.createElement('div');
             soundLabel.classList.add('sound-label');
             soundLabel.textContent = sound;
-            gridContainer.appendChild(soundLabel);
+            soundRow.appendChild(soundLabel);
+            
+            // Add individual volume control
+            const volumeControl = document.createElement('div');
+            volumeControl.classList.add('sound-volume-control');
+            
+            const volumeSlider = document.createElement('input');
+            volumeSlider.type = 'range';
+            volumeSlider.min = '0';
+            volumeSlider.max = '1';
+            volumeSlider.step = '0.01';
+            volumeSlider.value = '0.8';
+            volumeSlider.classList.add('sound-volume-slider');
+            volumeSlider.dataset.sound = sound;
+            
+            const volumeDisplay = document.createElement('span');
+            volumeDisplay.classList.add('sound-volume-display');
+            volumeDisplay.textContent = '80%';
+            volumeDisplay.id = `${sound.toLowerCase()}-volume-display`;
+            
+            volumeControl.appendChild(volumeSlider);
+            volumeControl.appendChild(volumeDisplay);
+            soundRow.appendChild(volumeControl);
+            
+            gridContainer.appendChild(soundRow);
 
             for (let colIndex = 0; colIndex < steps; colIndex++) {
                 const cell = document.createElement('div');
@@ -79,7 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         mainGainNode = audioContext.createGain();
         mainGainNode.gain.value = volumeSlider.value;
         mainGainNode.connect(audioContext.destination);
-        sounds.forEach(sound => loadSound(sound, soundFiles[sound]));
+        
+        // Create individual gain nodes for each sound
+        sounds.forEach(sound => {
+            soundGainNodes[sound] = audioContext.createGain();
+            soundGainNodes[sound].gain.value = 0.8; // Default volume
+            soundGainNodes[sound].connect(mainGainNode);
+            loadSound(sound, soundFiles[sound]);
+        });
     }
 
     async function loadSound(soundName, url) {
@@ -92,11 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function playSound(buffer, time) {
+    function playSound(buffer, time, soundName) {
         if (!audioContext) return;
         const source = audioContext.createBufferSource();
         source.buffer = buffer;
-        source.connect(mainGainNode);
+        source.connect(soundGainNodes[soundName]);
         source.start(time);
     }
 
@@ -111,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notesInQueue.push({ note: step, time: time });
         for (let i = 0; i < sounds.length; i++) {
             if (gridState[i][step]) {
-                playSound(audioBuffers[sounds[i]], time);
+                playSound(audioBuffers[sounds[i]], time, sounds[i]);
             }
         }
     }
@@ -200,6 +236,24 @@ document.addEventListener('DOMContentLoaded', () => {
     volumeSlider.addEventListener('input', () => {
         if(mainGainNode) mainGainNode.gain.value = volumeSlider.value;
         volumeValue.textContent = `${Math.round(volumeSlider.value * 100)}%`;
+    });
+
+    // Individual sound volume controls
+    gridContainer.addEventListener('input', (e) => {
+        if (e.target.classList.contains('sound-volume-slider')) {
+            const soundName = e.target.dataset.sound;
+            const volume = parseFloat(e.target.value);
+            
+            if (soundGainNodes[soundName]) {
+                soundGainNodes[soundName].gain.value = volume;
+            }
+            
+            // Update display
+            const display = document.getElementById(`${soundName.toLowerCase()}-volume-display`);
+            if (display) {
+                display.textContent = `${Math.round(volume * 100)}%`;
+            }
+        }
     });
 
     playStopBtn.addEventListener('click', togglePlayback);
