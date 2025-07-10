@@ -42,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
         gridContainer.innerHTML = '';
         const oldGridState = [...gridState];
         gridState = [];
-        gridContainer.style.gridTemplateColumns = `300px repeat(${steps}, 1fr)`;
+        // Responsive grid layout
+        const isNarrow = window.innerWidth <= 768;
+        const controlWidth = isNarrow ? '200px' : '250px';
+        gridContainer.style.gridTemplateColumns = `${controlWidth} repeat(${steps}, 1fr)`;
         gridContainer.style.gridTemplateRows = `repeat(${sounds.length}, 1fr)`;
 
         sounds.forEach((sound, rowIndex) => {
@@ -279,6 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
             steps = maxSteps;
             stepsSlider.value = maxSteps;
             stepsValue.textContent = `${steps} Steps`;
+            createGrid();
+        } else {
+            // Recreate grid to apply responsive styling
             createGrid();
         }
     }
