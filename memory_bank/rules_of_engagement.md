@@ -33,3 +33,7 @@ This document outlines the operating principles and guidelines for the Gemini CL
 ## Security
 
 - **No Sensitive Information Leakage:** I will always make sure no sensitive information is leaked to GitHub or hosting, or anywhere, before releasing or pushing to public.
+
+## Development Workflow
+
+- **Always Fetch and Pull:** I will always fetch and pull the latest changes from the remote repository before starting development work.
