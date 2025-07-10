@@ -104,7 +104,7 @@ A web-based drum machine with a dynamic grid interface. Users can create drum lo
 -   [ ] **Individual Sound Controls**
     -   [x] Add volume slider for each drum sound row
     -   [x] Implement solo/mute buttons per drum row
-    -   [ ] Add visual level indicators for each sound
+    
 
 -   [ ] **Enhanced Visual Feedback**
     -   [ ] Color-code each drum type (kick=red, snare=blue, hi-hat=yellow, etc.)
@@ -214,6 +214,9 @@ This enhanced plan transforms our basic drum machine into a professional-grade t
     -   [ ] Add kit selector dropdown (808, Acoustic, LinnDrum, Trap, House)
     -   [ ] Create kit configuration system with different sound sets
     -   [ ] Implement seamless kit switching during playback
+
+-   [ ] **Visual Level Indicators**
+    -   [ ] Add visual level indicators for each sound
 
 ## Security Enhancement Plan
 
