@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const volumeValue = document.getElementById('volume-value');
     const saveBtn = document.getElementById('save-btn');
     const loadBtn = document.getElementById('load-btn');
+    const patternSelect = document.getElementById('pattern-select');
+    const patternNameInput = document.getElementById('pattern-name');
 
     // --- State Variables ---
     const sounds = ['Kick', 'Snare', 'Hi-Hat', 'Crash', 'Toms', 'Clap'];
@@ -40,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerID;
     let lastStepDrawn = -1;
     const notesInQueue = [];
+    const PATTERN_STORAGE_KEY = 'drumMachinePatterns';
+    let patternBank = [];
 
     // --- Grid Generation ---
     function createGrid() {
