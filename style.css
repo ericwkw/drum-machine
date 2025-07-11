@@ -245,11 +245,13 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .grid-cell.active {
     background-color: #00aaff; /* Active color - a bright blue */
+    box-shadow: 0 0 15px #00aaff, 0 0 25px #00aaff; /* Glow effect */
+    transition: background-color 0.1s ease, box-shadow 0.1s ease; /* Smooth transition */
 }
 
 .grid-cell.playhead {
     background-color: rgba(255, 255, 255, 0.4); /* Playhead highlight */
-    box-shadow: 0 0 10px #00aaff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6); /* Subtle glow for playhead */
 }
 
 /* --- Responsive Design --- */

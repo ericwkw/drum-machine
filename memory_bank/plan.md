@@ -107,8 +107,12 @@ A web-based drum machine with a dynamic grid interface. Users can create drum lo
     
 
 -   [ ] **Enhanced Visual Feedback**
-    -   [ ] Color-code each drum type (kick=red, snare=blue, hi-hat=yellow, etc.)
-    -   [ ] Add glow effects and better animations
+    
+    -   [ ] **Add glow effects and better animations**
+    -   [x] Grid Cell Feedback (animations on activation/deactivation)
+    -   [x] Button Interactions (hover/active states)
+    -   [ ] Slider Interactions (smoother transitions)
+    -   [ ] Overall UI Responsiveness (general polish)
     -   [ ] Implement sound-reactive visual feedback
 
 ### **Enhancement Phase 2: Pattern Management** (Week 2)
