@@ -227,7 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function savePattern() {
+        const selectedSlot = patternSelect.value;
+        const patternName = patternNameInput.value;
+
         const pattern = {
+            name: patternName,
             gridState: gridState,
             tempo: tempo,
             steps: steps,
@@ -235,14 +239,16 @@ document.addEventListener('DOMContentLoaded', () => {
             soloedSound: soloedSound,
             mutedSounds: Array.from(mutedSounds)
         };
-        localStorage.setItem('drumMachinePattern', JSON.stringify(pattern));
-        alert('Pattern saved!');
+        patternBank[selectedSlot] = pattern;
+        localStorage.setItem(PATTERN_STORAGE_KEY, JSON.stringify(patternBank));
+        alert(`Pattern '${patternName}' saved to slot ${parseInt(selectedSlot) + 1}!`);
     }
 
     function loadPattern() {
-        const savedPattern = localStorage.getItem('drumMachinePattern');
-        if (savedPattern) {
-            const pattern = JSON.parse(savedPattern);
+        const selectedSlot = patternSelect.value;
+        const pattern = patternBank[selectedSlot];
+
+        if (pattern) {
             gridState = pattern.gridState;
             tempo = pattern.tempo;
             steps = pattern.steps;
@@ -255,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             volumeValue.textContent = `${Math.round(volumeSlider.value * 100)}%`;
             tempoValue.textContent = `${tempo} BPM`;
             stepsValue.textContent = `${steps} Steps`;
+            patternNameInput.value = pattern.name || `Pattern ${parseInt(selectedSlot) + 1}`;
 
             createGrid(); // Re-render grid with loaded state
             // Update solo/mute button states
@@ -274,9 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (mainGainNode) mainGainNode.gain.value = volumeSlider.value;
-            alert('Pattern loaded!');
+            alert(`Pattern '${pattern.name || `Pattern ${parseInt(selectedSlot) + 1}`}' loaded from slot ${parseInt(selectedSlot) + 1}!`);
         } else {
-            alert('No saved pattern found!');
+            alert('No pattern found in this slot!');
         }
     }
 
@@ -350,6 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.addEventListener('click', savePattern);
     loadBtn.addEventListener('click', loadPattern);
 
+    patternSelect.addEventListener('change', () => {
+        loadPattern();
+    });
+
     // --- Responsive Logic ---
     function handleResize() {
         const width = window.innerWidth;
@@ -381,6 +392,29 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', handleResize);
 
     // --- Initial Setup ---
+    function initializePatternBank() {
+        const storedPatterns = localStorage.getItem(PATTERN_STORAGE_KEY);
+        if (storedPatterns) {
+            patternBank = JSON.parse(storedPatterns);
+        } else {
+            // Initialize with empty patterns
+            for (let i = 0; i < 8; i++) {
+                patternBank.push({
+                    name: `Pattern ${i + 1}`,
+                    gridState: Array(sounds.length).fill(false).map(() => Array(steps).fill(false)),
+                    tempo: 120,
+                    steps: 16,
+                    volume: 0.8,
+                    soloedSound: null,
+                    mutedSounds: []
+                });
+            }
+        }
+        // Set initial pattern name input
+        patternNameInput.value = patternBank[patternSelect.value].name;
+    }
+
+    initializePatternBank();
     createGrid();
     handleResize(); // Call on initial load
     requestAnimationFrame(draw);
