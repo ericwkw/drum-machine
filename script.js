@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const stepsValue = document.getElementById('steps-value');
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
+    const saveBtn = document.getElementById('save-btn');
+    const loadBtn = document.getElementById('load-btn');
 
     // --- State Variables ---
     const sounds = ['Kick', 'Snare', 'Hi-Hat', 'Crash', 'Toms', 'Clap'];
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let mainGainNode;
     const soundGainNodes = {}; // Individual gain nodes for each sound
     let soloedSound = null;
-    const mutedSounds = new Set();
+    let mutedSounds = new Set();
     let isPlaying = false;
     let currentStep = 0;
     let tempo = parseInt(tempoSlider.value);
@@ -220,6 +222,60 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = !isPlaying;
     }
 
+    function savePattern() {
+        const pattern = {
+            gridState: gridState,
+            tempo: tempo,
+            steps: steps,
+            volume: parseFloat(volumeSlider.value),
+            soloedSound: soloedSound,
+            mutedSounds: Array.from(mutedSounds)
+        };
+        localStorage.setItem('drumMachinePattern', JSON.stringify(pattern));
+        alert('Pattern saved!');
+    }
+
+    function loadPattern() {
+        const savedPattern = localStorage.getItem('drumMachinePattern');
+        if (savedPattern) {
+            const pattern = JSON.parse(savedPattern);
+            gridState = pattern.gridState;
+            tempo = pattern.tempo;
+            steps = pattern.steps;
+            volumeSlider.value = pattern.volume;
+            soloedSound = pattern.soloedSound;
+            mutedSounds = new Set(pattern.mutedSounds);
+
+            tempoSlider.value = tempo;
+            stepsSlider.value = steps;
+            volumeValue.textContent = `${Math.round(volumeSlider.value * 100)}%`;
+            tempoValue.textContent = `${tempo} BPM`;
+            stepsValue.textContent = `${steps} Steps`;
+
+            createGrid(); // Re-render grid with loaded state
+            // Update solo/mute button states
+            document.querySelectorAll('.solo-btn').forEach(btn => {
+                if (btn.dataset.sound === soloedSound) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            document.querySelectorAll('.mute-btn').forEach(btn => {
+                if (mutedSounds.has(btn.dataset.sound)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if (mainGainNode) mainGainNode.gain.value = volumeSlider.value;
+            alert('Pattern loaded!');
+        } else {
+            alert('No saved pattern found!');
+        }
+    }
+
     // --- Event Listeners ---
     gridContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('grid-cell')) {
@@ -286,6 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playStopBtn.addEventListener('click', togglePlayback);
+
+    saveBtn.addEventListener('click', savePattern);
+    loadBtn.addEventListener('click', loadPattern);
 
     // --- Responsive Logic ---
     function handleResize() {

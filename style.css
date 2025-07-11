@@ -90,6 +90,14 @@ button:hover {
     background-color: #c82333;
 }
 
+#save-btn, #load-btn {
+    background-color: #6c757d; /* Light grey */
+}
+
+#save-btn:hover, #load-btn:hover {
+    background-color: #5a6268;
+}
+
 
 /* Sliders */
 input[type="range"] {
