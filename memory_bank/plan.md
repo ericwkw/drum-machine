@@ -108,12 +108,7 @@ A web-based drum machine with a dynamic grid interface. Users can create drum lo
 
 -   [ ] **Enhanced Visual Feedback**
     
-    -   [ ] **Add glow effects and better animations**
-    -   [x] Grid Cell Feedback (animations on activation/deactivation)
-    -   [x] Button Interactions (hover/active states)
-    -   [ ] Slider Interactions (smoother transitions)
-    -   [ ] Overall UI Responsiveness (general polish)
-    -   [ ] Implement sound-reactive visual feedback
+    
 
 ### **Enhancement Phase 2: Pattern Management** (Week 2)
 **Priority: HIGH** | **Complexity: Medium**
@@ -221,6 +216,14 @@ This enhanced plan transforms our basic drum machine into a professional-grade t
 
 -   [ ] **Visual Level Indicators**
     -   [ ] Add visual level indicators for each sound
+
+-   [ ] **Enhanced Visual Feedback**
+    -   [ ] Add glow effects and better animations
+        -   [ ] Grid Cell Feedback (animations on activation/deactivation)
+        -   [ ] Button Interactions (hover/active states)
+        -   [ ] Slider Interactions (smoother transitions)
+        -   [ ] Overall UI Responsiveness (general polish)
+    -   [ ] Implement sound-reactive visual feedback
 
 ## Security Enhancement Plan
 
