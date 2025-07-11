@@ -115,8 +115,8 @@ A web-based drum machine with a dynamic grid interface. Users can create drum lo
 
 -   [ ] **Save/Load System**
     -   [x] Implement localStorage-based pattern saving
-    -   [ ] Create pattern bank with 8-16 slots
-    -   [ ] Add pattern naming and organization
+    -   [x] Create pattern bank with 8-16 slots
+    -   [x] Add pattern naming and organization
     -   [ ] Test save/load pattern bank functionality
 
 -   [ ] **Preset System**
