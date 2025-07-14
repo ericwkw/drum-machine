@@ -191,22 +191,62 @@ const App = () => {
     };
   };
 
-  // Set up grid layout dynamically like the original
+  // Initialize grid layout with defensive coding for Lovable Visual Edit compatibility
   useEffect(() => {
-    const updateGridLayout = () => {
-      const gridContainer = document.querySelector('.grid-container');
-      if (gridContainer) {
-        const isNarrow = window.innerWidth <= 768;
-        const controlWidth = isNarrow ? '200px' : '250px';
-        gridContainer.style.gridTemplateColumns = `${controlWidth} repeat(${steps}, 1fr)`;
-        gridContainer.style.gridTemplateRows = `repeat(${sounds.length}, 1fr)`;
+    const setupGrid = () => {
+      if (typeof document !== 'undefined') {
+        const gridContainer = document.querySelector('.grid-container');
+        if (gridContainer) {
+          const isNarrow = window.innerWidth <= 768;
+          const controlWidth = isNarrow ? '200px' : '250px';
+          const soundCount = sounds.length;
+          
+          gridContainer.style.gridTemplateColumns = `${controlWidth} repeat(${steps}, 1fr)`;
+          gridContainer.style.gridTemplateRows = `repeat(${soundCount}, 1fr)`;
+          
+          // Add data attributes for Lovable Visual Edit compatibility
+          gridContainer.setAttribute('data-drum-grid', 'true');
+          gridContainer.setAttribute('data-steps', steps.toString());
+          gridContainer.setAttribute('data-sounds', soundCount.toString());
+          gridContainer.setAttribute('data-control-width', controlWidth);
+        }
       }
     };
 
-    updateGridLayout();
-    window.addEventListener('resize', updateGridLayout);
+    // Initial setup
+    setupGrid();
     
-    return () => window.removeEventListener('resize', updateGridLayout);
+    // Defensive setup with slight delay for Lovable Visual Edit compatibility
+    const timeoutId = setTimeout(setupGrid, 100);
+    
+    // Window resize handler
+    const handleResize = () => {
+      setupGrid();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // DOM change observer for Visual Edit compatibility
+    const observer = new MutationObserver(() => {
+      const timeoutId = setTimeout(setupGrid, 50);
+      return () => clearTimeout(timeoutId);
+    });
+    
+    const gridContainer = document.querySelector('.grid-container');
+    if (gridContainer) {
+      observer.observe(gridContainer, { 
+        childList: true, 
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+      });
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
+    };
   }, [steps]);
 
   return (
