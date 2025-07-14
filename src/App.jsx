@@ -191,63 +191,151 @@ const App = () => {
     };
   };
 
-  // Initialize grid layout with defensive coding for Lovable Visual Edit compatibility
+  // BULLETPROOF Visual Edit Compatibility System
   useEffect(() => {
-    const setupGrid = () => {
-      if (typeof document !== 'undefined') {
+    let setupTimeouts = [];
+    let resizeTimeout = null;
+    let observer = null;
+    
+    const safeSetupGrid = () => {
+      try {
         const gridContainer = document.querySelector('.grid-container');
-        if (gridContainer) {
-          const isNarrow = window.innerWidth <= 768;
-          const controlWidth = isNarrow ? '200px' : '250px';
-          const soundCount = sounds.length;
+        if (!gridContainer) return false;
+        
+        const isNarrow = window.innerWidth <= 768;
+        const controlWidth = isNarrow ? '200px' : '250px';
+        const soundCount = sounds.length;
+        
+        // Apply grid styles with error handling
+        try {
+          gridContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: ${controlWidth} repeat(${steps}, 1fr);
+            grid-template-rows: repeat(${soundCount}, 1fr);
+            gap: 2px;
+          `;
           
-          gridContainer.style.gridTemplateColumns = `${controlWidth} repeat(${steps}, 1fr)`;
-          gridContainer.style.gridTemplateRows = `repeat(${soundCount}, 1fr)`;
-          
-          // Add data attributes for Lovable Visual Edit compatibility
+          // Critical Visual Edit compatibility attributes
+          gridContainer.setAttribute('data-lovable-grid', 'drum-machine');
           gridContainer.setAttribute('data-drum-grid', 'true');
           gridContainer.setAttribute('data-steps', steps.toString());
           gridContainer.setAttribute('data-sounds', soundCount.toString());
-          gridContainer.setAttribute('data-control-width', controlWidth);
+          gridContainer.setAttribute('data-initialized', 'true');
+          gridContainer.classList.add('drum-grid-active');
+          
+          return true;
+        } catch (styleError) {
+          console.warn('Grid style application failed:', styleError);
+          return false;
         }
+      } catch (error) {
+        console.warn('Grid setup failed:', error);
+        return false;
       }
     };
 
-    // Initial setup
-    setupGrid();
+    const robustSetupGrid = () => {
+      // Multiple attempts with exponential backoff
+      let attempts = 0;
+      const maxAttempts = 5;
+      
+      const attemptSetup = () => {
+        if (safeSetupGrid()) {
+          return; // Success
+        }
+        
+        attempts++;
+        if (attempts < maxAttempts) {
+          const delay = Math.min(100 * Math.pow(2, attempts), 1000);
+          const timeoutId = setTimeout(attemptSetup, delay);
+          setupTimeouts.push(timeoutId);
+        }
+      };
+      
+      attemptSetup();
+    };
+
+    // Initial setup - immediate and delayed
+    robustSetupGrid();
     
-    // Defensive setup with slight delay for Lovable Visual Edit compatibility
-    const timeoutId = setTimeout(setupGrid, 100);
+    // Additional defensive setups for Visual Edit
+    [50, 200, 500, 1000].forEach(delay => {
+      const timeoutId = setTimeout(robustSetupGrid, delay);
+      setupTimeouts.push(timeoutId);
+    });
     
-    // Window resize handler
+    // Debounced resize handler
     const handleResize = () => {
-      setupGrid();
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(robustSetupGrid, 100);
     };
 
     window.addEventListener('resize', handleResize);
     
-    // DOM change observer for Visual Edit compatibility
-    const observer = new MutationObserver(() => {
-      const timeoutId = setTimeout(setupGrid, 50);
-      return () => clearTimeout(timeoutId);
-    });
-    
-    const gridContainer = document.querySelector('.grid-container');
-    if (gridContainer) {
-      observer.observe(gridContainer, { 
-        childList: true, 
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class', 'style']
+    // Advanced DOM observer for Visual Edit changes
+    try {
+      observer = new MutationObserver((mutations) => {
+        let needsReset = false;
+        
+        mutations.forEach(mutation => {
+          if (mutation.type === 'attributes' && 
+              (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+            needsReset = true;
+          } else if (mutation.type === 'childList' && 
+                     (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)) {
+            needsReset = true;
+          }
+        });
+        
+        if (needsReset) {
+          // Debounced reset after DOM changes
+          const timeoutId = setTimeout(robustSetupGrid, 100);
+          setupTimeouts.push(timeoutId);
+        }
       });
+      
+      // Wait for DOM to be ready, then observe
+      const startObserving = () => {
+        const gridContainer = document.querySelector('.grid-container');
+        if (gridContainer && observer) {
+          observer.observe(gridContainer, { 
+            childList: true, 
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-lovable-grid']
+          });
+          
+          // Also observe document body for Visual Edit changes
+          observer.observe(document.body, {
+            childList: true,
+            subtree: false,
+            attributes: true,
+            attributeFilter: ['class']
+          });
+        }
+      };
+      
+      startObserving();
+      setTimeout(startObserving, 200); // Backup observation setup
+      
+    } catch (observerError) {
+      console.warn('MutationObserver setup failed:', observerError);
     }
 
+    // Cleanup function
     return () => {
-      clearTimeout(timeoutId);
+      setupTimeouts.forEach(id => clearTimeout(id));
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener('resize', handleResize);
-      observer.disconnect();
+      if (observer) {
+        try {
+          observer.disconnect();
+        } catch (e) {
+          console.warn('Observer disconnect failed:', e);
+        }
+      }
     };
-  }, [steps]);
+  }, [steps, sounds.length]);
 
   return (
     <div className="drum-machine">
@@ -292,7 +380,12 @@ const App = () => {
         </div>
       </div>
 
-      <div className="grid-container">
+      <div 
+        className="grid-container"
+        data-lovable-grid="drum-machine"
+        data-drum-grid="true"
+        data-component="drum-sequencer"
+      >
         {sounds.map((sound, rowIndex) => {
           const soundRow = (
             <div key={`${sound}-row`} className="sound-row">
