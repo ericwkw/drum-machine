@@ -1,78 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EW Drum Machine</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    
-
-    <div class="drum-machine">
-        <div class="controls">
-            <!-- Tempo Slider -->
-            <div class="control-group">
-                <label for="tempo-slider">Tempo</label>
-                <input type="range" id="tempo-slider" min="40" max="240" value="120">
-                <span id="tempo-value">120 BPM</span>
-            </div>
-
-            <!-- Steps Slider -->
-            <div class="control-group">
-                <label for="steps-slider">Steps</label>
-                <input type="range" id="steps-slider" min="4" max="32" value="16">
-                <span id="steps-value">16 Steps</span>
-            </div>
-
-            <!-- Volume Slider -->
-            <div class="control-group">
-                <label for="volume-slider">Volume</label>
-                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8">
-                <span id="volume-value">80%</span>
-            </div>
-        </div>
-
-        <div class="grid-container">
-            <!-- This will be populated by JavaScript -->
-        </div>
-
-        <div class="pattern-bank">
-            <div class="pattern-bank-row">
-                <div class="control-group">
-                    <label for="pattern-select">Pattern Slot:</label>
-                    <select id="pattern-select">
-                        <option value="0">Pattern 1</option>
-                        <option value="1">Pattern 2</option>
-                        <option value="2">Pattern 3</option>
-                        <option value="3">Pattern 4</option>
-                        <option value="4">Pattern 5</option>
-                        <option value="5">Pattern 6</option>
-                        <option value="6">Pattern 7</option>
-                        <option value="7">Pattern 8</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="pattern-name">Pattern Name:</label>
-                    <input type="text" id="pattern-name" value="My Pattern">
-                </div>
-            </div>
-            <div class="pattern-actions">
-                <button id="save-btn">Save</button>
-                <button id="load-btn">Load</button>
-            </div>
-        </div>
-
-        <div class="main-actions">
-            <!-- Play/Stop Button -->
-            <button id="play-stop-btn">Play</button>
-
-            <!-- Clear Button -->
-            <button id="clear-btn">Clear</button>
-        </div>
-    </div>
-
-    <script src="script.js" type="module"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
