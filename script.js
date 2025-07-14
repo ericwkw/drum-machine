@@ -76,18 +76,21 @@ document.addEventListener('DOMContentLoaded', () => {
             soundLabel.textContent = sound;
             soundRow.appendChild(soundLabel);
 
-            // Add solo/mute buttons
+            // Add solo/mute buttons and volume controls
+            const soundControls = document.createElement('div');
+            soundControls.classList.add('sound-controls');
+            
             const soloBtn = document.createElement('button');
             soloBtn.textContent = 'S';
             soloBtn.classList.add('solo-btn');
             soloBtn.dataset.sound = sound;
-            soundRow.appendChild(soloBtn);
+            soundControls.appendChild(soloBtn);
 
             const muteBtn = document.createElement('button');
             muteBtn.textContent = 'M';
             muteBtn.classList.add('mute-btn');
             muteBtn.dataset.sound = sound;
-            soundRow.appendChild(muteBtn);
+            soundControls.appendChild(muteBtn);
             
             // Add individual volume control
             const volumeControl = document.createElement('div');
@@ -103,7 +106,47 @@ document.addEventListener('DOMContentLoaded', () => {
             volumeSlider.dataset.sound = sound;
             
             volumeControl.appendChild(volumeSlider);
-            soundRow.appendChild(volumeControl);
+            soundControls.appendChild(volumeControl);
+            soundRow.appendChild(soundControls);
+
+            // Add responsive toggle button
+            const toggleBtn = document.createElement('button');
+            toggleBtn.textContent = '⚙';
+            toggleBtn.classList.add('sound-controls-toggle');
+            toggleBtn.dataset.sound = sound;
+            soundRow.appendChild(toggleBtn);
+
+            // Add responsive menu
+            const controlsMenu = document.createElement('div');
+            controlsMenu.classList.add('sound-controls-menu');
+            
+            const menuSoloBtn = document.createElement('button');
+            menuSoloBtn.textContent = 'Solo';
+            menuSoloBtn.classList.add('solo-btn');
+            menuSoloBtn.dataset.sound = sound;
+            controlsMenu.appendChild(menuSoloBtn);
+
+            const menuMuteBtn = document.createElement('button');
+            menuMuteBtn.textContent = 'Mute';
+            menuMuteBtn.classList.add('mute-btn');
+            menuMuteBtn.dataset.sound = sound;
+            controlsMenu.appendChild(menuMuteBtn);
+            
+            const menuVolumeControl = document.createElement('div');
+            menuVolumeControl.classList.add('sound-volume-control');
+            
+            const menuVolumeSlider = document.createElement('input');
+            menuVolumeSlider.type = 'range';
+            menuVolumeSlider.min = '0';
+            menuVolumeSlider.max = '1';
+            menuVolumeSlider.step = '0.01';
+            menuVolumeSlider.value = '0.8';
+            menuVolumeSlider.classList.add('sound-volume-slider');
+            menuVolumeSlider.dataset.sound = sound;
+            
+            menuVolumeControl.appendChild(menuVolumeSlider);
+            controlsMenu.appendChild(menuVolumeControl);
+            soundRow.appendChild(controlsMenu);
             
             gridContainer.appendChild(soundRow);
 
@@ -264,7 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
             patternNameInput.value = pattern.name || `Pattern ${parseInt(selectedSlot) + 1}`;
 
             createGrid(); // Re-render grid with loaded state
-            // Update solo/mute button states
+            
+            // Update solo/mute button states for all instances
             document.querySelectorAll('.solo-btn').forEach(btn => {
                 if (btn.dataset.sound === soloedSound) {
                     btn.classList.add('active');
@@ -272,11 +316,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.classList.remove('active');
                 }
             });
+            
             document.querySelectorAll('.mute-btn').forEach(btn => {
                 if (mutedSounds.has(btn.dataset.sound)) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
+                }
+            });
+
+            // Update volume sliders for all instances
+            document.querySelectorAll('.sound-volume-slider').forEach(slider => {
+                const soundName = slider.dataset.sound;
+                if (soundGainNodes[soundName]) {
+                    slider.value = soundGainNodes[soundName].gain.value;
                 }
             });
 
@@ -298,21 +351,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const soundName = e.target.dataset.sound;
             if (soloedSound === soundName) {
                 soloedSound = null;
-                e.target.classList.remove('active');
+                // Remove active class from all solo buttons for this sound
+                document.querySelectorAll(`.solo-btn[data-sound="${soundName}"]`).forEach(btn => btn.classList.remove('active'));
             } else {
                 soloedSound = soundName;
+                // Remove active class from all solo buttons
                 document.querySelectorAll('.solo-btn.active').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
+                // Add active class to all solo buttons for this sound
+                document.querySelectorAll(`.solo-btn[data-sound="${soundName}"]`).forEach(btn => btn.classList.add('active'));
             }
         } else if (e.target.classList.contains('mute-btn')) {
             const soundName = e.target.dataset.sound;
             if (mutedSounds.has(soundName)) {
                 mutedSounds.delete(soundName);
-                e.target.classList.remove('active');
+                document.querySelectorAll(`.mute-btn[data-sound="${soundName}"]`).forEach(btn => btn.classList.remove('active'));
             } else {
                 mutedSounds.add(soundName);
-                e.target.classList.add('active');
+                document.querySelectorAll(`.mute-btn[data-sound="${soundName}"]`).forEach(btn => btn.classList.add('active'));
             }
+        } else if (e.target.classList.contains('sound-controls-toggle')) {
+            const soundRow = e.target.closest('.sound-row');
+            const menu = soundRow.querySelector('.sound-controls-menu');
+            
+            // Close all other menus
+            document.querySelectorAll('.sound-controls-menu').forEach(m => {
+                if (m !== menu) m.style.display = 'none';
+            });
+            
+            // Toggle current menu
+            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+        }
+    });
+
+    // Close menus when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.sound-row')) {
+            document.querySelectorAll('.sound-controls-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
         }
     });
 
@@ -349,6 +425,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (soundGainNodes[soundName]) {
                 soundGainNodes[soundName].gain.value = volume;
             }
+            
+            // Sync all volume sliders for this sound
+            document.querySelectorAll(`.sound-volume-slider[data-sound="${soundName}"]`).forEach(slider => {
+                slider.value = volume;
+            });
         }
     });
 
