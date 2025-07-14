@@ -9,6 +9,7 @@ const App = () => {
   const [volume, setVolume] = useState(50);
   const [selectedPattern, setSelectedPattern] = useState('');
   const [patternName, setPatternName] = useState('');
+  const [patterns, setPatterns] = useState([]);
   const [grid, setGrid] = useState({});
   const [soundPaths] = useState({
     kick: '/sounds/kick.wav',
@@ -163,9 +164,25 @@ const App = () => {
   };
 
   const loadPatternList = () => {
-    // This would populate pattern select options
-    // Implementation depends on how you want to handle the select element
+    const savedPatterns = [];
+    for (let i = 0; i < 8; i++) {
+      const pattern = localStorage.getItem(`pattern_${i}`);
+      if (pattern) {
+        try {
+          const parsedPattern = JSON.parse(pattern);
+          savedPatterns.push({ id: i, name: parsedPattern.name || `Pattern ${i + 1}` });
+        } catch (error) {
+          console.error('Error parsing pattern:', error);
+        }
+      }
+    }
+    setPatterns(savedPatterns);
   };
+
+  // Load patterns on component mount
+  useEffect(() => {
+    loadPatternList();
+  }, []);
 
   const updateSoundRow = (sound, property, value) => {
     soundRowsRef.current[sound] = {
@@ -291,6 +308,14 @@ const App = () => {
           onChange={(e) => setSelectedPattern(e.target.value)}
         >
           <option value="">Select Pattern</option>
+          {Array.from({ length: 8 }, (_, i) => {
+            const pattern = patterns.find(p => p.id === i);
+            return (
+              <option key={i} value={`pattern_${i}`}>
+                {pattern ? pattern.name : `Pattern ${i + 1}`}
+              </option>
+            );
+          })}
         </select>
         <input
           type="text"
