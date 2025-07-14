@@ -174,6 +174,24 @@ const App = () => {
     };
   };
 
+  // Set up grid layout dynamically like the original
+  useEffect(() => {
+    const updateGridLayout = () => {
+      const gridContainer = document.querySelector('.grid-container');
+      if (gridContainer) {
+        const isNarrow = window.innerWidth <= 768;
+        const controlWidth = isNarrow ? '200px' : '250px';
+        gridContainer.style.gridTemplateColumns = `${controlWidth} repeat(${steps}, 1fr)`;
+        gridContainer.style.gridTemplateRows = `repeat(${sounds.length}, 1fr)`;
+      }
+    };
+
+    updateGridLayout();
+    window.addEventListener('resize', updateGridLayout);
+    
+    return () => window.removeEventListener('resize', updateGridLayout);
+  }, [steps]);
+
   return (
     <div className="drum-machine">
       <div className="controls">
@@ -218,44 +236,53 @@ const App = () => {
       </div>
 
       <div className="grid-container">
-        {sounds.map(sound => (
-          <div key={sound} className="sound-row">
-            <div className="sound-label">{sound.toUpperCase()}</div>
-            <div className="sound-controls">
-              <input
-                type="range"
-                className="volume-slider"
-                min="0"
-                max="100"
-                defaultValue="50"
-                onChange={(e) => updateSoundRow(sound, 'volume', Number(e.target.value))}
-              />
-              <button
-                className="solo-btn"
-                onClick={() => updateSoundRow(sound, 'solo', !soundRowsRef.current[sound]?.solo)}
-              >
-                S
-              </button>
-              <button
-                className="mute-btn"
-                onClick={() => updateSoundRow(sound, 'mute', !soundRowsRef.current[sound]?.mute)}
-              >
-                M
-              </button>
-            </div>
-            <div className="grid-cells">
-              {Array.from({ length: 16 }, (_, step) => (
-                <div
-                  key={step}
-                  className={`grid-cell ${grid[sound]?.[step] ? 'active' : ''} ${
-                    currentStep === step && isPlaying ? 'current' : ''
-                  } ${step >= steps ? 'disabled' : ''}`}
-                  onClick={() => step < steps && toggleCell(sound, step)}
+        {sounds.map((sound, rowIndex) => {
+          const soundRow = (
+            <div key={`${sound}-row`} className="sound-row">
+              <div className="sound-label">{sound.toUpperCase()}</div>
+              <div className="sound-controls">
+                <input
+                  type="range"
+                  className="sound-volume-slider"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  defaultValue="0.8"
+                  data-sound={sound}
+                  onChange={(e) => updateSoundRow(sound, 'volume', Number(e.target.value))}
                 />
-              ))}
+                <button
+                  className="solo-btn"
+                  data-sound={sound}
+                  onClick={() => updateSoundRow(sound, 'solo', !soundRowsRef.current[sound]?.solo)}
+                >
+                  S
+                </button>
+                <button
+                  className="mute-btn"
+                  data-sound={sound}
+                  onClick={() => updateSoundRow(sound, 'mute', !soundRowsRef.current[sound]?.mute)}
+                >
+                  M
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+
+          const gridCells = Array.from({ length: steps }, (_, step) => (
+            <div
+              key={`${sound}-${step}`}
+              className={`grid-cell ${grid[sound]?.[step] ? 'active' : ''} ${
+                currentStep === step && isPlaying ? 'playhead' : ''
+              }`}
+              data-row={rowIndex}
+              data-col={step}
+              onClick={() => toggleCell(sound, step)}
+            />
+          ));
+
+          return [soundRow, ...gridCells];
+        }).flat()}
       </div>
 
       <div className="pattern-bank">
