@@ -75,7 +75,7 @@ label {
 .grid-container {
     display: grid;
     grid-template-columns: 200px 1fr; /* Sound info and the rest of the grid */
-    gap: 8px;
+    gap: 6px; /* Consistent gap */
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem; /* Add space for the line */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Add separator line */
@@ -112,7 +112,6 @@ label {
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 6px;
     overflow-x: auto; /* Enable horizontal scrolling */
-    padding: 6px 0; /* Match vertical padding to gap */
 }
 
 .grid-cell {
@@ -123,6 +122,7 @@ label {
     border: 1px solid #2c3e50;
     aspect-ratio: 1 / 1;
     min-width: 30px; /* Ensure a minimum size for usability */
+    position: relative; /* Needed for z-index */
 }
 
 .grid-cell:hover {
@@ -132,6 +132,7 @@ label {
 .grid-cell.active {
     background-color: #f39c12;
     box-shadow: 0 0 15px #f39c12, inset 0 0 5px rgba(255,255,255,0.3);
+    z-index: 2; /* Lift active cells to show glow */
 }
 
 .grid-cell.playhead {
