@@ -270,6 +270,11 @@ button:disabled {
     button, .solo-btn, .mute-btn {
         border-radius: 4px; /* Reduce border radius on smaller screens */
     }
+
+    .pattern-controls input, .pattern-controls select {
+        height: 2.5rem; /* Standardize height */
+        box-sizing: border-box; /* Include padding and border in height */
+    }
 }
 
 @media (max-width: 580px) {
