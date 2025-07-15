@@ -255,4 +255,12 @@ button:disabled {
     .grid-row {
         grid-column: 1;
     }
+
+    .sound-label {
+        font-size: clamp(0.75rem, 4vw, 1rem);
+    }
+
+    .sound-info {
+        align-items: center; /* Ensure vertical centering */
+    }
 }
