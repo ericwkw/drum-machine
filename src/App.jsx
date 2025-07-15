@@ -16,6 +16,7 @@ const App = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [tempo, setTempo] = useState(120);
   const [steps, setSteps] = useState(16);
+  const [maxSteps, setMaxSteps] = useState(32);
   const [volume, setVolume] = useState(50);
   const [grid, setGrid] = useState(() => {
     const initialGrid = {};
@@ -39,6 +40,7 @@ const App = () => {
   const intervalRef = useRef(null);
   const audioContextRef = useRef(null);
   const soundBuffersRef = useRef({});
+  const gridContainerRef = useRef(null);
 
   const loadPatternList = useCallback(() => {
     const savedPatterns = [];
@@ -73,6 +75,43 @@ const App = () => {
     initAudio();
     loadPatternList();
   }, [loadPatternList]);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const { width } = entry.contentRect;
+        const minCellWidth = 40; // Minimum width for a drum pad
+        const gap = 12;
+        let calculatedMaxSteps;
+
+        if (window.innerWidth <= 768) {
+          calculatedMaxSteps = Math.floor((width + gap) / (minCellWidth + gap));
+        } else {
+          const soundInfoWidth = 200;
+          const gridWidth = width - soundInfoWidth - gap;
+          calculatedMaxSteps = Math.floor((gridWidth + gap) / (minCellWidth + gap));
+        }
+
+        setMaxSteps(Math.max(4, calculatedMaxSteps));
+      }
+    });
+
+    if (gridContainerRef.current) {
+      observer.observe(gridContainerRef.current);
+    }
+
+    return () => {
+      if (gridContainerRef.current) {
+        observer.unobserve(gridContainerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (steps > maxSteps) {
+      setSteps(maxSteps);
+    }
+  }, [maxSteps, steps]);
 
   const playSound = (sound, gainValue) => {
     if (!audioContextRef.current || !soundBuffersRef.current[sound]) return;
@@ -214,7 +253,7 @@ const App = () => {
         </div>
         <div className="control-group">
           <label htmlFor="steps">Steps</label>
-          <input type="range" id="steps" min="4" max="32" value={steps} onChange={handleStepsChange} />
+          <input type="range" id="steps" min="4" max={maxSteps} value={steps} onChange={handleStepsChange} />
           <span>{steps}</span>
         </div>
         <div className="control-group">
@@ -224,7 +263,7 @@ const App = () => {
         </div>
       </div>
 
-      <div className="grid-container" style={{ '--steps': steps }} data-lovable-id="grid-container">
+      <div className="grid-container" ref={gridContainerRef} style={{ '--steps': steps }} data-lovable-id="grid-container">
         {sounds.map(sound => (
           <React.Fragment key={sound}>
             <div className="sound-info">
