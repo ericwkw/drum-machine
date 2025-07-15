@@ -111,6 +111,7 @@ label {
     display: grid;
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 12px;
+    overflow: hidden; /* Prevent overflow */
 }
 
 .grid-cell {
