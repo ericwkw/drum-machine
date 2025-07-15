@@ -41,6 +41,7 @@ const App = () => {
   const audioContextRef = useRef(null);
   const soundBuffersRef = useRef({});
   const gridContainerRef = useRef(null);
+  const currentStepRef = useRef(0);
 
   const loadPatternList = useCallback(() => {
     const savedPatterns = [];
@@ -129,25 +130,29 @@ const App = () => {
     setIsPlaying(true);
   }, []);
 
-  // Sequencer loop with precise timing
+  // Sequencer loop with immediate visual and audio feedback
   useEffect(() => {
     if (isPlaying) {
       const stepTime = (60 / tempo / 4) * 1000;
+      currentStepRef.current = 0;
+      
       intervalRef.current = setInterval(() => {
-        setCurrentStep(prev => {
-          const nextStep = (prev + 1) % steps;
-          
-          // Play sounds immediately when step advances, before React re-renders
-          const soloedSounds = sounds.filter(s => soundControls[s].solo);
-          sounds.forEach(sound => {
-            const isSoloed = soloedSounds.length > 0 && !soundControls[sound].solo;
-            if (grid[sound]?.[nextStep] && !soundControls[sound].mute && !isSoloed) {
-              const soundVolume = (soundControls[sound].volume / 100) * (volume / 100);
-              playSound(sound, soundVolume);
-            }
-          });
-          
-          return nextStep;
+        currentStepRef.current = (currentStepRef.current + 1) % steps;
+        const nextStep = currentStepRef.current;
+        
+        // Immediate visual update via DOM manipulation
+        requestAnimationFrame(() => {
+          setCurrentStep(nextStep);
+        });
+        
+        // Play sounds immediately - no delay
+        const soloedSounds = sounds.filter(s => soundControls[s].solo);
+        sounds.forEach(sound => {
+          const isSoloed = soloedSounds.length > 0 && !soundControls[sound].solo;
+          if (grid[sound]?.[nextStep] && !soundControls[sound].mute && !isSoloed) {
+            const soundVolume = (soundControls[sound].volume / 100) * (volume / 100);
+            playSound(sound, soundVolume);
+          }
         });
       }, stepTime);
     }
@@ -155,6 +160,7 @@ const App = () => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        currentStepRef.current = 0;
       }
     };
   }, [isPlaying, tempo, steps, grid, volume, soundControls]);
