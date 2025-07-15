@@ -126,7 +126,6 @@ label {
 
 .grid-cell:hover {
     background-color: #4a6fa5;
-    transform: scale(1.05);
 }
 
 .grid-cell.active {
