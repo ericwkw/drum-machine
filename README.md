@@ -44,3 +44,4 @@ This will start the development server and open the drum machine in your browser
 ## Contributing
 
 Contributions are welcome! If you have any ideas for new features or improvements, please open an issue or submit a pull request.
+
