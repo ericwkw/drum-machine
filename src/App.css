@@ -257,7 +257,8 @@ button:disabled {
     }
 
     .sound-label {
-        font-size: clamp(0.75rem, 4vw, 1rem);
+        font-size: clamp(0.75rem, 4vw, 0.9rem);
+        padding-top: 0.2rem; /* Visually center the text */
     }
 
     .sound-info {
