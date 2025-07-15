@@ -269,3 +269,9 @@ button:disabled {
         border-radius: 4px; /* Reduce border radius on smaller screens */
     }
 }
+
+@media (max-width: 580px) {
+    .grid-cell {
+        border-radius: 4px;
+    }
+}
