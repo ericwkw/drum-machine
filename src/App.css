@@ -264,4 +264,8 @@ button:disabled {
     .sound-info {
         align-items: center; /* Ensure vertical centering */
     }
+
+    button, .solo-btn, .mute-btn {
+        border-radius: 4px; /* Reduce border radius on smaller screens */
+    }
 }
