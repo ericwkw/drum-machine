@@ -191,6 +191,7 @@ label {
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    flex-grow: 1;
 }
 
 input[type="text"], select {
@@ -199,6 +200,7 @@ input[type="text"], select {
     border: 1px solid #34495e;
     padding: 0.5rem;
     border-radius: 4px;
+    width: 100%; /* Make fields expand */
 }
 
 /* Main Action Buttons */
