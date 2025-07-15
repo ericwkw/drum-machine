@@ -116,6 +116,9 @@ const App = () => {
 
   const playSound = (sound, gainValue) => {
     if (!audioContextRef.current || !soundBuffersRef.current[sound]) return;
+    const audioStartTime = performance.now();
+    console.log(`🔊 Sound ${sound} triggered at:`, audioStartTime);
+    
     const source = audioContextRef.current.createBufferSource();
     const gainNode = audioContextRef.current.createGain();
     source.buffer = soundBuffersRef.current[sound];
@@ -123,6 +126,8 @@ const App = () => {
     gainNode.connect(audioContextRef.current.destination);
     gainNode.gain.value = gainValue;
     source.start();
+    
+    console.log(`🔊 Sound ${sound} actually started at:`, performance.now(), `(delay: ${performance.now() - audioStartTime}ms)`);
   };
 
   const startSequencer = useCallback(() => {
@@ -130,22 +135,29 @@ const App = () => {
     setIsPlaying(true);
   }, []);
 
-  // Sequencer loop with immediate visual and audio feedback
+  // Sequencer loop with timing diagnostics
   useEffect(() => {
     if (isPlaying) {
       const stepTime = (60 / tempo / 4) * 1000;
       currentStepRef.current = 0;
+      console.log(`🎵 Starting sequencer with step time: ${stepTime}ms`);
       
       intervalRef.current = setInterval(() => {
+        const intervalFireTime = performance.now();
+        console.log(`⏰ Interval fired at:`, intervalFireTime);
+        
         currentStepRef.current = (currentStepRef.current + 1) % steps;
         const nextStep = currentStepRef.current;
         
-        // Immediate visual update via DOM manipulation
+        // Visual update with timing
+        const visualUpdateTime = performance.now();
         requestAnimationFrame(() => {
+          const rafTime = performance.now();
+          console.log(`👁️  Visual update scheduled at:`, visualUpdateTime, `RAF executed at:`, rafTime, `(RAF delay: ${rafTime - visualUpdateTime}ms)`);
           setCurrentStep(nextStep);
         });
         
-        // Play sounds immediately - no delay
+        // Play sounds immediately with timing
         const soloedSounds = sounds.filter(s => soundControls[s].solo);
         sounds.forEach(sound => {
           const isSoloed = soloedSounds.length > 0 && !soundControls[sound].solo;
@@ -154,6 +166,8 @@ const App = () => {
             playSound(sound, soundVolume);
           }
         });
+        
+        console.log(`📊 Step ${nextStep} completed. Total time since interval: ${performance.now() - intervalFireTime}ms`);
       }, stepTime);
     }
 
@@ -161,6 +175,7 @@ const App = () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         currentStepRef.current = 0;
+        console.log(`🛑 Sequencer stopped`);
       }
     };
   }, [isPlaying, tempo, steps, grid, volume, soundControls]);
