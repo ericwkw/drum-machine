@@ -73,8 +73,8 @@ label {
 
 /* Grid Container */
 .grid-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 200px 1fr; /* Sound info and the rest of the grid */
     gap: 12px; /* Consistent gap */
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem; /* Add space for the line */
@@ -82,12 +82,14 @@ label {
 }
 
 .sound-info {
+    grid-column: 1;
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 1rem;
     background: rgba(0,0,0,0.15);
     border-radius: 8px;
-    padding: 0 1rem;
 }
 
 .sound-label {
@@ -105,7 +107,9 @@ label {
 }
 
 .grid-row {
-    display: flex;
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(var(--steps), 1fr);
     gap: 12px;
 }
 
@@ -116,7 +120,6 @@ label {
     transition: all 0.2s ease;
     border: 1px solid #2c3e50;
     aspect-ratio: 1 / 1;
-    flex-grow: 1;
 }
 
 .grid-cell:hover {
