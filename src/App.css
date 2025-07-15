@@ -38,9 +38,8 @@ h1 {
     flex-wrap: wrap;
     gap: 1.5rem;
     margin-bottom: 1.5rem;
-    background: rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    border-radius: 12px;
+    padding-bottom: 1.5rem; /* Add space for the line */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Add separator line */
 }
 
 .control-group {
@@ -73,6 +72,8 @@ label {
     grid-template-columns: 200px 1fr; /* Sound info and the rest of the grid */
     gap: 8px;
     margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem; /* Add space for the line */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Add separator line */
 }
 
 .sound-info {
@@ -182,9 +183,8 @@ label {
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    background: rgba(0,0,0,0.1);
-    padding: 1rem;
-    border-radius: 12px;
+    padding-bottom: 1.5rem; /* Add space for the line */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Add separator line */
 }
 
 .pattern-management, .pattern-selection {
