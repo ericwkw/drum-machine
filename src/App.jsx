@@ -205,7 +205,7 @@ const App = () => {
 
   return (
     <div className="drum-machine" data-lovable-id="drum-machine-container">
-      <h1>Drum Machine</h1>
+      
       <div className="controls">
         <div className="control-group">
           <label htmlFor="tempo">Tempo</label>
