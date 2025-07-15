@@ -105,6 +105,7 @@ label {
     display: grid;
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 6px;
+    overflow-x: auto; /* Enable horizontal scrolling */
 }
 
 .grid-cell {
@@ -114,6 +115,7 @@ label {
     transition: all 0.2s ease;
     border: 1px solid #2c3e50;
     aspect-ratio: 1 / 1;
+    min-width: 30px; /* Ensure a minimum size for usability */
 }
 
 .grid-cell:hover {
