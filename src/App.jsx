@@ -129,12 +129,24 @@ const App = () => {
     setIsPlaying(true);
   }, []);
 
+  // Sequencer loop with precise timing
   useEffect(() => {
     if (isPlaying) {
       const stepTime = (60 / tempo / 4) * 1000;
       intervalRef.current = setInterval(() => {
         setCurrentStep(prev => {
           const nextStep = (prev + 1) % steps;
+          
+          // Play sounds immediately when step advances, before React re-renders
+          const soloedSounds = sounds.filter(s => soundControls[s].solo);
+          sounds.forEach(sound => {
+            const isSoloed = soloedSounds.length > 0 && !soundControls[sound].solo;
+            if (grid[sound]?.[nextStep] && !soundControls[sound].mute && !isSoloed) {
+              const soundVolume = (soundControls[sound].volume / 100) * (volume / 100);
+              playSound(sound, soundVolume);
+            }
+          });
+          
           return nextStep;
         });
       }, stepTime);
@@ -145,22 +157,7 @@ const App = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPlaying, tempo, steps]);
-
-  // Play sounds when currentStep changes
-  useEffect(() => {
-    if (isPlaying) {
-      const soloedSounds = sounds.filter(s => soundControls[s].solo);
-      
-      sounds.forEach(sound => {
-        const isSoloed = soloedSounds.length > 0 && !soundControls[sound].solo;
-        if (grid[sound]?.[currentStep] && !soundControls[sound].mute && !isSoloed) {
-          const soundVolume = (soundControls[sound].volume / 100) * (volume / 100);
-          playSound(sound, soundVolume);
-        }
-      });
-    }
-  }, [isPlaying, tempo, steps, grid, volume, soundControls, currentStep]);
+  }, [isPlaying, tempo, steps, grid, volume, soundControls]);
 
 
   const stopSequencer = () => {
