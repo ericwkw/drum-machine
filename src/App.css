@@ -109,14 +109,14 @@ label {
 .grid-row-wrapper {
     grid-column: 2;
     overflow-x: auto; /* Enable horizontal scrolling */
-    padding: 8px 0; /* Add vertical padding for glow effect */
+    padding: 15px 0; /* Add vertical padding for glow effect */
 }
 
 .grid-row {
     display: grid;
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 6px;
-    margin: -8px 0; /* Cancel out wrapper padding */
+    margin: -15px 0; /* Cancel out wrapper padding */
 }
 
 .grid-cell {
@@ -136,7 +136,7 @@ label {
 
 .grid-cell.active {
     background-color: #f39c12;
-    box-shadow: 0 0 15px #f39c12, inset 0 0 5px rgba(255,255,255,0.3);
+    box-shadow: 0 0 12px #f39c12, inset 0 0 5px rgba(255,255,255,0.3);
     z-index: 2; /* Lift active cells to show glow */
 }
 
