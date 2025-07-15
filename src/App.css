@@ -242,9 +242,8 @@ button:disabled {
     .drum-machine {
         padding: 1rem;
     }
-    .controls, .pattern-controls {
-        flex-direction: column;
-        align-items: stretch;
+    .controls {
+        /* Allow natural wrapping */
     }
     .grid-container {
         grid-template-columns: 1fr; /* Stack sound info and grid row */
