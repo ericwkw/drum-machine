@@ -112,7 +112,7 @@ label {
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 6px;
     overflow-x: auto; /* Enable horizontal scrolling */
-    padding: 10px 0; /* Add vertical padding for glow effect */
+    padding: 6px 0; /* Match vertical padding to gap */
 }
 
 .grid-cell {
