@@ -106,12 +106,17 @@ label {
     width: 100%;
 }
 
-.grid-row {
+.grid-row-wrapper {
     grid-column: 2;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 8px 0; /* Add vertical padding for glow effect */
+}
+
+.grid-row {
     display: grid;
     grid-template-columns: repeat(var(--steps), 1fr);
     gap: 6px;
-    overflow-x: auto; /* Enable horizontal scrolling */
+    margin: -8px 0; /* Cancel out wrapper padding */
 }
 
 .grid-cell {

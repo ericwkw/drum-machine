@@ -252,15 +252,17 @@ const App = () => {
                 </button>
               </div>
             </div>
-            <div className="grid-row">
-              {Array.from({ length: steps }, (_, step) => (
-                <div
-                  key={step}
-                  className={`grid-cell ${grid[sound]?.[step] ? 'active' : ''} ${currentStep === step && isPlaying ? 'playhead' : ''}`}
-                  onClick={() => toggleCell(sound, step)}
-                  data-lovable-id={`grid-cell-${sound}-${step}`}
-                />
-              ))}
+            <div className="grid-row-wrapper">
+              <div className="grid-row">
+                {Array.from({ length: steps }, (_, step) => (
+                  <div
+                    key={step}
+                    className={`grid-cell ${grid[sound]?.[step] ? 'active' : ''} ${currentStep === step && isPlaying ? 'playhead' : ''}`}
+                    onClick={() => toggleCell(sound, step)}
+                    data-lovable-id={`grid-cell-${sound}-${step}`}
+                  />
+                ))}
+              </div>
             </div>
           </React.Fragment>
         ))}
