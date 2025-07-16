@@ -289,7 +289,9 @@ const App = () => {
         {sounds.map(sound => (
           <React.Fragment key={sound}>
             <div className="sound-info">
-              <span className="sound-label">{sound.charAt(0).toUpperCase() + sound.slice(1)}</span>
+              <div className="sound-name-display">
+                <span className="sound-label">{sound}</span>
+              </div>
               <div className="sound-controls">
                 <input
                   type="range"
