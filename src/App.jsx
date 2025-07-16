@@ -113,6 +113,28 @@ const App = () => {
     }
   }, [maxSteps, steps]);
 
+  useEffect(() => {
+    const sliders = document.querySelectorAll('input[type="range"]');
+    const updateSliderFill = (slider) => {
+      const min = slider.min || 0;
+      const max = slider.max || 100;
+      const value = slider.value;
+      const percent = ((value - min) / (max - min)) * 100;
+      slider.style.setProperty('--fill-percent', `${percent}%`);
+    };
+
+    sliders.forEach(slider => {
+      updateSliderFill(slider);
+      slider.addEventListener('input', () => updateSliderFill(slider));
+    });
+
+    return () => {
+      sliders.forEach(slider => {
+        slider.removeEventListener('input', () => updateSliderFill(slider));
+      });
+    };
+  }, [tempo, steps, volume, soundControls]);
+
   const playSound = (sound, gainValue) => {
     if (!audioContextRef.current || !soundBuffersRef.current[sound]) return;
     const source = audioContextRef.current.createBufferSource();
@@ -267,7 +289,9 @@ const App = () => {
         {sounds.map(sound => (
           <React.Fragment key={sound}>
             <div className="sound-info">
-              <span className="sound-label">{sound.toUpperCase()}</span>
+              <div className="sound-name-display">
+                <span className="sound-label">{sound}</span>
+              </div>
               <div className="sound-controls">
                 <input
                   type="range"

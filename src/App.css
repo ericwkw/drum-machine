@@ -1,13 +1,18 @@
 /* General Body Styling */
 body {
-    background: linear-gradient(135deg, #1a1d29 0%, #2a2d3a 100%);
+    background: linear-gradient(to bottom, #111, #000);
     color: #f8fafc;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+}
+
+/* Apply Orbitron font to form elements and buttons */
+input, select, button {
+    font-family: 'Orbitron', sans-serif;
 }
 
 h1 {
@@ -19,14 +24,17 @@ h1 {
 
 /* Main Container */
 .drum-machine {
-    background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%);
+    background: linear-gradient(to bottom, #303030, #282828);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5); /* Soft glow effect */
     width: 95vw;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    border-left: 1px solid rgba(0, 0, 0, 0.5);
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 /* Controls Section */
@@ -47,6 +55,68 @@ h1 {
     align-items: center;
     gap: 0.75rem;
     flex-grow: 1; /* Allow control groups to expand */
+}
+
+/* General input[type="range"] styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Track styling */
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 4px;
+    border: 1px solid #111;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+    background: linear-gradient(to right, #336b6f var(--fill-percent, 0%), #1a1c1f var(--fill-percent, 0%));
+}
+
+input[type="range"]::-moz-range-track {
+    height: 8px;
+    border-radius: 4px;
+    border: 1px solid #111;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+    background: linear-gradient(to right, #336b6f var(--fill-percent, 0%), #1a1c1f var(--fill-percent, 0%));
+}
+
+/* Thumb styling */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -8px; /* Center thumb on track */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #e0e0e0, #b0b0b0); /* Silver gradient */
+    border: 1px solid #808080;
+    box-shadow: 
+        0 2px 4px rgba(0,0,0,0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5); /* Inner highlight for 3D effect */
+    transition: background 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #e0e0e0, #b0b0b0); /* Silver gradient */
+    border: 1px solid #808080;
+    box-shadow: 
+        0 2px 4px rgba(0,0,0,0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5); /* Inner highlight for 3D effect */
+    transition: background 0.2s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+    background: linear-gradient(145deg, #f0f0f0, #c0c0c0); /* Brighter silver on hover */
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+    background: linear-gradient(145deg, #f0f0f0, #c0c0c0); /* Brighter silver on hover */
 }
 
 .control-group input[type="range"] {
@@ -84,18 +154,33 @@ label {
     grid-column: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0 1rem;
+    justify-content: space-between; /* Stack display and controls */
+    padding: 0.75rem;
     background: rgba(0,0,0,0.15);
     border-radius: 8px;
 }
 
+.sound-name-display {
+    background: #1a1c1f; /* Dark LCD background */
+    color: #6dffff; /* Glowing blue text */
+    border: 1px solid #111;
+    padding: 0 0.75rem;
+    border-radius: 4px;
+    font-family: 'VT323', monospace; /* Digital font */
+    font-size: 1.2rem;
+    text-shadow: 0 0 3px #00f0ff; /* Text glow */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    height: 2.2rem;
+    line-height: 2.2rem;
+    text-align: center;
+    margin-bottom: 0.75rem; /* Space between display and controls */
+}
+
 .sound-label {
-    color: #ecf0f1;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    color: inherit; /* Inherit color from parent */
+    font-weight: 400; /* Regular weight for digital font */
+    font-size: inherit; /* Inherit font size */
 }
 
 .sound-controls {
@@ -108,26 +193,33 @@ label {
 .grid-row {
     grid-column: 2;
     display: grid;
-    grid-template-columns: repeat(var(--steps), 1fr);
+    grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
     gap: 12px;
 }
 
 .grid-cell {
-    background-color: #34495e;
-    border-radius: 6px;
+    background: linear-gradient(145deg, #4a4e54, #3f4247);
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid #2c3e50;
+    border: 1px solid #35383d;
+    box-shadow: 
+        inset 0 2px 1px rgba(255, 255, 255, 0.08),
+        inset 0 -2px 1px rgba(0, 0, 0, 0.2),
+        0 4px 6px rgba(0, 0, 0, 0.2);
     aspect-ratio: 1 / 1;
 }
 
 .grid-cell:hover {
-    background-color: #4a6fa5;
+    background: linear-gradient(145deg, #5a5e64, #4f5257);
 }
 
 .grid-cell.active {
-    background-color: #f39c12;
-    box-shadow: 0 0 15px #f39c12, inset 0 0 5px rgba(255,255,255,0.3);
+    background: linear-gradient(145deg, #f39c12, #e67e22);
+    box-shadow: 
+        inset 0 2px 2px rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(243, 156, 18, 0.6);
+    transform: translateY(1px);
 }
 
 .grid-cell.playhead {
@@ -158,22 +250,39 @@ label {
 }
 
 .solo-btn, .mute-btn {
-    background: #7f8c8d;
-    color: white;
-    border: none;
+    background: linear-gradient(145deg, #2e3034, #25272b);
+    color: #ecf0f1;
+    border: 1px solid #212326;
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow:
+        inset 0 2px 1px rgba(255, 255, 255, 0.05),
+        inset 0 -2px 1px rgba(0, 0, 0, 0.2),
+        0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.solo-btn:hover, .mute-btn:hover {
+    background: linear-gradient(145deg, #383a3f, #2a2c30);
 }
 
 .solo-btn.active {
-    background: #f1c40f;
+    background: linear-gradient(145deg, #f1c40f, #e67e22);
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(241, 196, 15, 0.5);
+    transform: translateY(1px);
 }
 
 .mute-btn.active {
-    background: #e74c3c;
+    background: linear-gradient(145deg, #e74c3c, #c0392b);
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(231, 76, 60, 0.5);
+    transform: translateY(1px);
 }
 
 /* Pattern Controls */
@@ -194,13 +303,39 @@ label {
     flex-grow: 1;
 }
 
+/* Common styles for text and select inputs */
 input[type="text"], select {
-    background: #2c3e50;
-    color: white;
-    border: 1px solid #34495e;
-    padding: 0.5rem;
+    background-color: #1a1c1f; /* Dark LCD background */
+    color: #6dffff; /* Brighter glowing blue text */
+    border: 1px solid #111;
+    padding: 0 0.75rem; /* Padding for horizontal spacing */
     border-radius: 4px;
-    width: 100%; /* Make fields expand */
+    font-family: 'VT323', monospace; /* Digital font */
+    font-size: 1.5rem; /* Increased font size */
+    text-shadow: 0 0 3px #00f0ff; /* Reduced text glow */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); /* Inner shadow for screen effect */
+    width: 100%;
+    text-transform: uppercase; /* ALL CAPS */
+    height: 2.8rem; /* Increased height */
+    line-height: 2.8rem; /* Vertically center text */
+    box-sizing: border-box;
+    -webkit-appearance: none; /* Remove default styling */
+    appearance: none;
+}
+
+/* Specific styling for the select dropdown */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpolygon points='0,0 12,0 6,8' fill='%236dffff'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem; /* Make space for the arrow */
+}
+
+/* Placeholder styling for the text input */
+input[type="text"]::placeholder {
+  color: #4a9a9f; /* Clear, non-glowing color for placeholder */
+  text-shadow: none; /* Remove glow for sharpness */
+  opacity: 1; /* Ensure placeholder is fully visible */
 }
 
 /* Main Action Buttons */
@@ -210,16 +345,43 @@ input[type="text"], select {
     gap: 1rem;
 }
 
-button {
-    background: #3498db;
-    color: white;
-    border: none;
+/* Styling for pattern and main action buttons */
+.pattern-controls button,
+.main-actions button {
+    background: linear-gradient(145deg, #2e3034, #25272b);
+    color: #ecf0f1;
+    border: 1px solid #212326;
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 
+        inset 0 2px 1px rgba(255, 255, 255, 0.05),
+        inset 0 -2px 1px rgba(0, 0, 0, 0.2),
+        0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pattern-controls button:hover,
+.main-actions button:hover {
+    background: linear-gradient(145deg, #383a3f, #2a2c30);
+    color: #fff;
+}
+
+.pattern-controls button:active,
+.main-actions button:active {
+    box-shadow: 
+        inset 0 2px 2px rgba(0, 0, 0, 0.3);
+    transform: translateY(1px);
+}
+
+.pattern-controls button:disabled,
+.main-actions button:disabled {
+    background: #25272b;
+    color: #5a5e63;
+    cursor: not-allowed;
+    box-shadow: inset 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
@@ -254,18 +416,15 @@ button:disabled {
         justify-content: space-between;
         align-items: center;
         margin-bottom: 8px;
+        gap: 1rem; /* Add horizontal space for separation */
     }
+
+    .sound-name-display {
+        margin-bottom: 0; /* Remove margin for row layout */
+    }
+
     .grid-row {
         grid-column: 1;
-    }
-
-    .sound-label {
-        font-size: clamp(0.75rem, 4vw, 0.9rem);
-        padding-top: 0.2rem; /* Visually center the text */
-    }
-
-    .sound-info {
-        align-items: center; /* Ensure vertical centering */
     }
 
     button, .solo-btn, .mute-btn {
@@ -288,5 +447,22 @@ button:disabled {
 @media (max-width: 580px) {
     .grid-cell {
         border-radius: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .drum-machine {
+        padding: 1rem; /* Further reduce padding for very small screens */
+    }
+
+    .sound-name-display {
+        font-size: 1rem;
+        height: 2rem;
+        line-height: 2rem;
+    }
+
+    .pattern-controls {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
