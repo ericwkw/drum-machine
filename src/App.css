@@ -199,7 +199,7 @@ label {
 .grid-row {
     grid-column: 2;
     display: grid;
-    grid-template-columns: repeat(var(--steps), 1fr);
+    grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
     gap: 12px;
 }
 
